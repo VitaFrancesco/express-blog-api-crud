@@ -3,21 +3,21 @@ const postsArray = require('../posts');
 function index (req, res) {
     const queryTag = req.query.tag;
 
-    if (!queryTag) {
-        res.status(404);
-        return res.json({
-            error: "Not Found",
-            message: "Il post non è stato trovato"
-        });
-    };
-
+    
     let postsFiltered = postsArray;
     if(req.query.tag) {
         postsFiltered = postsArray.filter((el) => el.tags.includes(queryTag));
+        
+        if (!postsFiltered) {
+            res.status(404);
+            return res.json({
+                error: "Not Found",
+                message: "Il post non è stato trovato"
+            });
+        };
     };
     
     res.json(postsFiltered);
-
 
 };
 
@@ -61,13 +61,20 @@ function destroy (req, res) {
         postId = postsArray.findIndex((el) => el.id === parseInt(key));
         postsArray.splice(postId, 1);
     } else {
-        const postTag = postsArray.filter((el) => el.tags.includes(key));
-        postId = postTag.map((el) => postsArray.findIndex(el));
-        postId.forEach((el) => postsArray.splice(el, 1));
+        let indexEls =[];
+        postsArray.forEach((el) => {
+            if (el.tags.includes(key)) {
+                indexEls.push(el.id);
+            };
+        });
+        indexEls.forEach((index) => {
+            postId = postsArray.findIndex((el) => el.id === index);
+            postsArray.splice(postId, 1);
+        })
     };
     
 
-    if (!postId) {
+    if (!postId && postId !== 0) {
         res.status(404);
         return res.json({
             error: "Not Found",
