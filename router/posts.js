@@ -1,43 +1,24 @@
 const express = require('express');
 const router = express.Router();
 
-const postsArray = require('../posts');
+const postsController = require('../controllers/controllerPosts');
 
 // index
-router.get('/', function  (req, res) {
-    res.json(postsArray);
-});
+router.get('/', postsController.index);
 
 // show
-router.get('/:slug', function  (req, res) {
-    const slug = req.params.slug;
-
-    const post = postsArray.filter((el) => el.slug === slug);
-    if ( post.length > 0) {
-        res.json(post);
-    } else {
-        res.send('Ecco il post ' + req.params.slug);
-    }
-});
+router.get('/:slug', postsController.show);
 
 // store
-router.post('/', function  (req, res) {
-    res.send('Creazione nuovo post');
-});
+router.post('/', postsController.store);
 
 // update
-router.put('/:id', function  (req, res) {
-    res.send('Modifica integrale del post ' + req.params.id);
-});
+router.put('/:id', postsController.update);
 
 // modify
-router.patch('/:id', function  (req, res) {
-    res.send('Modifica parziale del post' + req.params.id);
-});
+router.patch('/:id', postsController.modify);
 
 // destroy
-router.delete('/:id', function (req, res) {
-    res.send('Eliminazione del post ' + req.params.id);
-});
+router.delete('/:id', postsController.destroy);
 
 module.exports = router;
