@@ -1,18 +1,45 @@
 const postsArray = require('../posts');
 
 function index (req, res) {
-    res.json(postsArray);
+    const queryTag = req.query.tag;
+
+    if (!queryTag) {
+        res.status(404);
+        return res.json({
+            error: "Not Found",
+            message: "Il post non è stato trovato"
+        });
+    };
+
+    let postsFiltered = postsArray;
+    if(req.query.tag) {
+        postsFiltered = postsArray.filter((el) => el.tags.includes(queryTag));
+    };
+    
+    res.json(postsFiltered);
+
+
 };
 
 function show (req, res) {
-    const id = parseInt(req.params.id);
+    const key = req.params.key;
+    let post;
 
-    const post = postsArray.filter((el) => el.id === id);
+    if (isNaN(parseInt(key))) {
+        post = postsArray.filter((el) => el.tags.includes(key));
+    } else {
+        post = postsArray.filter((el) => el.id === parseInt(key));
+    };
     if ( post.length > 0) {
         res.json(post);
     } else {
-        res.send('Ecco il post ' + id);
-    }
+        res.status(404);
+        return res.json({
+            error: "Not Found",
+            message: "Il post non è stato trovato"
+        });
+    };
+
 };
 
 function store (req, res) {
@@ -28,9 +55,26 @@ function modify (req, res) {
 };
 
 function destroy (req, res) {
-    const id = parseInt(req.params.id);
-    const postId = postsArray.findIndex((el) => el.id === id);
-    postsArray.splice(postId, 1);
+    const key = req.params.key;
+    let postId;
+    if (!(isNaN(parseInt(key)))) {
+        postId = postsArray.findIndex((el) => el.id === parseInt(key));
+        postsArray.splice(postId, 1);
+    } else {
+        const postTag = postsArray.filter((el) => el.tags.includes(key));
+        postId = postTag.map((el) => postsArray.findIndex(el));
+        postId.forEach((el) => postsArray.splice(el, 1));
+    };
+    
+
+    if (!postId) {
+        res.status(404);
+        return res.json({
+            error: "Not Found",
+            message: "Il post non è stato trovato"
+        });
+    };
+
     
     console.log(postsArray);
 
