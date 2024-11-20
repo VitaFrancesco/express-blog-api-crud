@@ -5,13 +5,13 @@ function index (req, res) {
 };
 
 function show (req, res) {
-    const slug = req.params.slug;
+    const id = parseInt(req.params.id);
 
-    const post = postsArray.filter((el) => el.slug === slug);
+    const post = postsArray.filter((el) => el.id === id);
     if ( post.length > 0) {
         res.json(post);
     } else {
-        res.send('Ecco il post ' + req.params.slug);
+        res.send('Ecco il post ' + id);
     }
 };
 
@@ -28,7 +28,14 @@ function modify (req, res) {
 };
 
 function destroy (req, res) {
-    res.send('Eliminazione del post ' + req.params.id);
+    const id = parseInt(req.params.id);
+    const postId = postsArray.findIndex((el) => el.id === id);
+    postsArray.splice(postId, 1);
+    
+    console.log(postsArray);
+
+    res.status(204);
+    res.send();
 };
 
 module.exports = {index, show, store, update, modify, destroy};
