@@ -82,7 +82,7 @@ function update (req, res) {
             error: "Not Found",
             messagge: "Post non trovato"
         })
-    }
+    };
 
     const errors = validate(req);
 
@@ -106,7 +106,27 @@ function update (req, res) {
 };
 
 function modify (req, res) {
-    res.send('Modifica parziale del post' + req.params.id);
+    const postId = parseInt(req.params.id);
+    let post = postsArray.find((el) => el.id === postId);
+
+    if (!post) {
+        res.status(404);
+        return res.json({
+            error: "Not Found",
+            messagge: "Post non trovato"
+        })
+    };
+
+    const {title, slug, content, image, tags} = req.body;
+
+    if (title) post.title = title;
+    if (slug) post.slug = slug;
+    if (content) post.content = content;
+    if (image) post.image = image;
+    if (tags) post.tags = tags;
+
+    res.json(post);
+    console.log(postsArray);
 };
 
 function destroy (req, res) {
@@ -144,6 +164,7 @@ function destroy (req, res) {
     res.send();
 };
 
+// ************validazione ***********
 function validate(req) {
 	const { title, slug, content, image, tags } = req.body;
 	const errors = [];
