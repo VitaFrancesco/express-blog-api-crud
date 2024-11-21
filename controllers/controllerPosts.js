@@ -45,13 +45,24 @@ function show (req, res) {
 function store (req, res) {
     const lastIndex = postsArray.at(-1).id;
 
-    newPost = {
+    const errors = validate(req);
+
+	if (errors.length) {
+		res.status(400);
+		return res.json({
+			error: 'Invalid request',
+			messages: errors,
+		});
+	};
+
+    const {title, slug, content, image, tags} = req.body;
+    const newPost = {
         id: lastIndex + 1,
-        title: req.body.title,
-        slug: req.body.slug,
-        content: req.body.content,
-        image: req.body.image,
-        tags: req.body.tags
+        title,
+        slug,
+        content,
+        image,
+        tags
     }
 
     postsArray.push(newPost);
@@ -62,7 +73,36 @@ function store (req, res) {
 };
 
 function update (req, res) {
-    res.send('Modifica integrale del post ' + req.params.id);
+    const postId = parseInt(req.params.id);
+    let post = postsArray.find((el) => el.id === postId);
+    
+    if (!post) {
+        res.status(404);
+        return res.json({
+            error: "Not Found",
+            messagge: "Post non trovato"
+        })
+    }
+
+    const errors = validate(req);
+
+	if (errors.length) {
+		res.status(400);
+		return res.json({
+			error: 'Invalid request',
+			messages: errors,
+		});
+	};
+
+    const {title, slug, content, image, tags} = req.body;
+    post.title = title,
+    post.slug = slug,
+    post.content = content,
+    post.image = image,
+    post.tags = tags
+
+    console.log(postsArray);
+    res.json(post);
 };
 
 function modify (req, res) {
@@ -103,5 +143,28 @@ function destroy (req, res) {
     res.status(204);
     res.send();
 };
+
+function validate(req) {
+	const { title, slug, content, image, tags } = req.body;
+	const errors = [];
+
+	if (!title) {
+		errors.push('Title is required');
+	};
+    if (!slug) {
+        errors.push('Slug is required');
+    };
+    if (!content) {
+        errors.push('Content is required');
+    };
+	if (!image) {
+		errors.push('Image is required');
+	};
+	if (!tags) {
+		errors.push('Tags is required');
+	};
+
+	return errors;
+}
 
 module.exports = {index, show, store, update, modify, destroy};
