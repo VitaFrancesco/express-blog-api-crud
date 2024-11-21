@@ -43,7 +43,22 @@ function show (req, res) {
 };
 
 function store (req, res) {
-    res.send('Creazione nuovo post');
+    const lastIndex = postsArray.at(-1).id;
+
+    newPost = {
+        id: lastIndex + 1,
+        title: req.body.title,
+        slug: req.body.slug,
+        content: req.body.content,
+        image: req.body.image,
+        tags: req.body.tags
+    }
+
+    postsArray.push(newPost);
+    res.status(201);
+
+    res.json(newPost);
+    console.log(postsArray);
 };
 
 function update (req, res) {
