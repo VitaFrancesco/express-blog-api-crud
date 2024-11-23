@@ -45,16 +45,6 @@ function show (req, res) {
 function store (req, res) {
     const lastIndex = postsArray.at(-1).id;
 
-    const errors = validate(req);
-
-	if (errors.length) {
-		res.status(400);
-		return res.json({
-			error: 'Invalid request',
-			messages: errors,
-		});
-	};
-
     const {title, slug, content, image, tags} = req.body;
     const newPost = {
         id: lastIndex + 1,
@@ -74,16 +64,6 @@ function store (req, res) {
 
 function update (req, res) {
     let post = req.post;
-
-    const errors = validate(req);
-
-	if (errors.length) {
-		res.status(400);
-		return res.json({
-			error: 'Invalid request',
-			messages: errors,
-		});
-	};
 
     const {title, slug, content, image, tags} = req.body;
     post.title = title,
@@ -146,28 +126,5 @@ function destroy (req, res) {
     res.send();
 };
 
-// ************validazione ***********
-function validate(req) {
-	const { title, slug, content, image, tags } = req.body;
-	const errors = [];
-
-	if (!title) {
-		errors.push('Title is required');
-	};
-    if (!slug) {
-        errors.push('Slug is required');
-    };
-    if (!content) {
-        errors.push('Content is required');
-    };
-	if (!image) {
-		errors.push('Image is required');
-	};
-	if (!tags) {
-		errors.push('Tags is required');
-	};
-
-	return errors;
-}
 
 module.exports = {index, show, store, update, modify, destroy};

@@ -3,6 +3,8 @@ const router = express.Router();
 const postsArray = require('../posts');
 
 const postsController = require('../controllers/controllerPosts');
+const validateObj = require('../middleware/validateObj');
+
 
 router.param('id', (req, res, next, id) => {
     const postId = parseInt(req.params.id);
@@ -27,10 +29,10 @@ router.get('/', postsController.index);
 router.get('/:key', postsController.show);
 
 // store
-router.post('/', postsController.store);
+router.post('/', validateObj, postsController.store);
 
 // update
-router.put('/:id', postsController.update);
+router.put('/:id', validateObj, postsController.update);
 
 // modify
 router.patch('/:id', postsController.modify);
