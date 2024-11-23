@@ -73,16 +73,7 @@ function store (req, res) {
 };
 
 function update (req, res) {
-    const postId = parseInt(req.params.id);
-    let post = postsArray.find((el) => el.id === postId);
-    
-    if (!post) {
-        res.status(404);
-        return res.json({
-            error: "Not Found",
-            messagge: "Post non trovato"
-        })
-    };
+    let post = req.post;
 
     const errors = validate(req);
 
@@ -106,16 +97,7 @@ function update (req, res) {
 };
 
 function modify (req, res) {
-    const postId = parseInt(req.params.id);
-    let post = postsArray.find((el) => el.id === postId);
-
-    if (!post) {
-        res.status(404);
-        return res.json({
-            error: "Not Found",
-            messagge: "Post non trovato"
-        })
-    };
+    let post = req.post;
 
     const {title, slug, content, image, tags} = req.body;
 
